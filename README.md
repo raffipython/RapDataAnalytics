@@ -1,2 +1,2 @@
 # RapDataAnalytics
-Analysis of Eminem lyrics across of his career
+Analysis of Eminem Rap lyrics across of his career
