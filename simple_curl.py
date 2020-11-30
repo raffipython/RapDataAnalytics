@@ -41,56 +41,61 @@ def curl_song(url):
 
 with urllib.request.urlopen(url) as response:
     html = str(response.read())
-    parts = html.split("<!-- start of song list -->")
+    try:
+        parts = html.split("<!-- start of song list -->")
 
-    lines = parts[1].split("<div id=")
+        print(len(parts))
 
-
-    albums = lines[2:23]
-    names = {}
-    #print(albums)
-    for album in albums[:-1]:
-        songs = album.split("div class")
-        if len(songs) > 1:
-            print("\n\n++++++++++++++++++++")
-            album_name = songs[0].split("<b>")[1].split("</b>")[0]
-            print(album_name)
-            for song in songs[1:]:
-                song_name = song.split("href=")
-                if song_name[0] == "=\"listalbum-item\"><a ":
-                    song_name = song_name[1].split(" ")[0]
-                    ##print(song_name)
-                    curl_song(song_name)
-                    d = {'album': album_name, "song_name": song_name, "lyrics": lines}
-                    df = pd.DataFrame(data=d)
+        lines = parts[1].split("<div id=")
 
 
-    print("_____________________")
-    album_name = "other_songs"
-    print(album_name)
-    final = albums[-1]
-    final = final.split("other songs:")
+        albums = lines[2:23]
+        names = {}
+        #print(albums)
+        for album in albums[:-1]:
+            songs = album.split("div class")
+            if len(songs) > 1:
+                print("\n\n++++++++++++++++++++")
+                album_name = songs[0].split("<b>")[1].split("</b>")[0]
+                print(album_name)
+                for song in songs[1:]:
+                    song_name = song.split("href=")
+                    if song_name[0] == "=\"listalbum-item\"><a ":
+                        song_name = song_name[1].split(" ")[0]
+                        ##print(song_name)
+                        ###curl_song(song_name)
+                        ###d = {'album': album_name, "song_name": song_name, "lyrics": lines}
+                        ###df = pd.DataFrame(data=d)
 
-    songs = final[-1].split("div class")
 
-    for s in songs[:-1]:
-        if "listalbum" in s:
-            song_name = s.split("href=")[1].split()[0]
-            curl_song(song_name)
-            d = {'album': album_name, "song_name": song_name, "lyrics": lines}
-            df = pd.DataFrame(data=d)
+        print("_____________________")
+        album_name = "other_songs"
+        print(album_name)
+        final = albums[-1]
+        final = final.split("other songs:")
 
-    song_name = songs[-1].split("script type")[0].split("href=")[1].split()[0]
-    lines = curl_song(song_name)
-    #print(song_name)
-    #print(lines)
+        songs = final[-1].split("div class")
 
-    d = {'album': album_name, "song_name": song_name, "lyrics": lines}
-    df = pd.DataFrame(data=d)
+        for s in songs[:-1]:
+            if "listalbum" in s:
+                song_name = s.split("href=")[1].split()[0]
+                ###curl_song(song_name)
+                ###d = {'album': album_name, "song_name": song_name, "lyrics": lines}
+                ###df = pd.DataFrame(data=d)
 
-    print(df)
-    df.to_json('eminem.json')
+        song_name = songs[-1].split("script type")[0].split("href=")[1].split()[0]
+        lines = curl_song(song_name)
+        print(song_name)
+        print(lines)
+        print("+-+-+-+")
 
+        d = {'album': album_name, "song_name": song_name, "lyrics": lines}
+        df = pd.DataFrame(data=d, index=song_name)
+
+        print(df)
+        df.to_json('eminem.json')
+    except:
+        pass
 
 
 
